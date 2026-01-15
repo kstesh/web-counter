@@ -1,0 +1,11 @@
+server:
+  host: localhost
+  port: 8080
+
+client:
+  requests_per_client: 10000
+  timeout_seconds: 10
+
+storage:
+  type: file      # memory | file
+  file_path: counter.txt

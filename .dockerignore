@@ -1,0 +1,12 @@
+.venv/
+venv/
+__pycache__/
+
+.env*
+env/
+
+.idea/
+.git
+.gitignore
+
+client.py
