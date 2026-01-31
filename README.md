@@ -1,7 +1,7 @@
 # How to Run
 
 ## 1. Configure
-Edit `config.yaml`.
+Edit `app/config/config.yaml` and `scripts/config.yaml`.
 
 ---
 
@@ -9,7 +9,7 @@ Edit `config.yaml`.
 
 Build image & Run container:
 ```bash
-docker build -t web-counter .
+docker build -f docker/Dockerfile -t web-counter .
 docker run -p 8080:8080 web-counter
 ```
 

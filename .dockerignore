@@ -9,4 +9,4 @@ env/
 .git
 .gitignore
 
-client.py
+scripts/

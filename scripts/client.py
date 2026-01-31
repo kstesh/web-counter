@@ -1,9 +1,11 @@
 import asyncio
 import time
 import aiohttp
-from pupupu import load_config
+from yaml import safe_load
 
-config = load_config("client")
+with open("./scripts/config.yaml", "r") as f:
+    config = safe_load(f)
+
 BASE_URL = f"http://{config['host']}:{config['port']}"
 
 async def get_count(session: aiohttp.ClientSession) -> int:

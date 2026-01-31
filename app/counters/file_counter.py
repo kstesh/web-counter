@@ -1,6 +1,6 @@
 import threading
 import os
-from acounter import ACounter
+from .acounter import ACounter
 
 class FileCounter(ACounter):
     def __init__(self, filename: str):

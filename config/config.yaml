@@ -1,0 +1,2 @@
+type: file      # memory | file
+file_path: counter.txt

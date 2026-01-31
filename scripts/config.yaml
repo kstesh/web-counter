@@ -1,0 +1,5 @@
+host: localhost
+port: 8080
+
+requests_per_client: 10000
+timeout_seconds: 10

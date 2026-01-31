@@ -1,5 +1,5 @@
 import threading
-from acounter import ACounter
+from .acounter import ACounter
 
 class InMemoryCounter(ACounter):
     def __init__(self):
