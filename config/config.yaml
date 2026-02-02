@@ -1,2 +1,11 @@
-type: file      # memory | file
+type: postgres      # memory | file | postgres
 file_path: counter.txt
+
+postgres:
+  host: host.docker.internal
+  port: 5433
+  dbname: counter_db
+  user: counter_user
+  password: counter_pass
+  minconn: 5
+  maxconn: 100

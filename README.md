@@ -1,7 +1,7 @@
 # How to Run
 
 ## 1. Configure
-Edit `app/config/config.yaml` and `scripts/config.yaml`.
+Edit `config/config.yaml` and `scripts/config.yaml`.
 
 ---
 
@@ -19,10 +19,10 @@ Activate virtual environment:
 
 ```bash
 .\.venv\Scripts\activate
-pip install aiohttp pyyaml
+pip install -r scripts/requirements.txt
 ```
 Run script:
 
 ```bash
-python client.py
+python scripts/client.py
 ```

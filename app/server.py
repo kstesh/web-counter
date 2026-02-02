@@ -5,7 +5,10 @@ from contextlib import asynccontextmanager
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     app.state.counter = get_configured_counter()
-    yield
+    try:
+        yield
+    finally:
+        app.state.counter.close()
 
 app = FastAPI(lifespan=lifespan)
 

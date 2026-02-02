@@ -9,3 +9,6 @@ class ACounter(ABC):
     @abstractmethod
     def get(self) -> int:
         pass
+
+    def close(self) -> None:
+        pass
