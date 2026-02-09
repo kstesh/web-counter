@@ -4,7 +4,7 @@ from .counters.acounter import ACounter
 from .counters.in_memory_counter import InMemoryCounter
 from .counters.file_counter import FileCounter
 from .counters.postgres_counter import PostgresCounter
-
+from .counters.mongo_counter import MongoCounter
 
 def load_config(path: str) -> dict:
     with open(path, "r") as f:
@@ -47,6 +47,21 @@ def get_configured_counter() -> ACounter:
                 minconn=int(pg_cfg.get("minconn", 5)),
                 maxconn=int(pg_cfg.get("maxconn", 20))
             )
+        case "mongo":
+            if "mongo" not in config:
+                logging.error("Mongo config section missing")
+                raise RuntimeError("Missing 'mongo' section in config")
+            mongo_cfg = config["mongo"]
+            required_keys = ["host", "port", "user", "password"]
+            missing = [k for k in required_keys if k not in mongo_cfg]
+
+            if missing:
+                logging.error(f"missing MongoDB config keys: {missing}")
+                raise RuntimeError(f"Missing MongoDB config keys: {missing}")
+
+            uri = f"mongodb://{mongo_cfg['user']}:{mongo_cfg['password']}@{mongo_cfg['host']}:{mongo_cfg['port']}/?"
+            counter = MongoCounter(uri=uri)
+
         case _:
             logging.error(f"unknown storage type {config['type']}")
             raise RuntimeError(f"Unsupported STORAGE type: {config['type']}")

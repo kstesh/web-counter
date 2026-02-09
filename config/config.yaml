@@ -1,4 +1,4 @@
-type: postgres      # memory | file | postgres
+type: mongo      # memory | file | postgres | mongo
 file_path: counter.txt
 
 postgres:
@@ -9,3 +9,9 @@ postgres:
   password: counter_pass
   minconn: 5
   maxconn: 100
+
+mongo:
+  host: host.docker.internal
+  port: 27017
+  user: admin
+  password: admin123
