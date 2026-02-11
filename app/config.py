@@ -5,6 +5,7 @@ from .counters.in_memory_counter import InMemoryCounter
 from .counters.file_counter import FileCounter
 from .counters.postgres_counter import PostgresCounter
 from .counters.mongo_counter import MongoCounter
+from .counters.cassandra_counter import CassandraCounter
 
 def load_config(path: str) -> dict:
     with open(path, "r") as f:
@@ -62,6 +63,19 @@ def get_configured_counter() -> ACounter:
             uri = f"mongodb://{mongo_cfg['user']}:{mongo_cfg['password']}@{mongo_cfg['host']}:{mongo_cfg['port']}/?"
             counter = MongoCounter(uri=uri)
 
+        case "cassandra":
+            if "cassandra" not in config:
+                logging.error("Cassandra config section missing")
+                raise RuntimeError("Missing 'Cassandra' section in config")
+            cass_cfg = config["cassandra"]
+            required_keys = ["host", "port", "keyspace"]
+            missing = [k for k in required_keys if k not in cass_cfg]
+
+            if missing:
+                logging.error(f"missing Cassandra config keys: {missing}")
+                raise RuntimeError(f"Missing Cassandra config keys: {missing}")
+
+            counter = CassandraCounter(host=cass_cfg["host"], port=cass_cfg["port"], keyspace=cass_cfg["keyspace"])
         case _:
             logging.error(f"unknown storage type {config['type']}")
             raise RuntimeError(f"Unsupported STORAGE type: {config['type']}")
