@@ -6,6 +6,7 @@ from .counters.file_counter import FileCounter
 from .counters.postgres_counter import PostgresCounter
 from .counters.mongo_counter import MongoCounter
 from .counters.cassandra_counter import CassandraCounter
+from .counters.mongo_cluster_counter import MongoClusterCounter
 
 def load_config(path: str) -> dict:
     with open(path, "r") as f:
@@ -76,6 +77,25 @@ def get_configured_counter() -> ACounter:
                 raise RuntimeError(f"Missing Cassandra config keys: {missing}")
 
             counter = CassandraCounter(host=cass_cfg["host"], port=cass_cfg["port"], keyspace=cass_cfg["keyspace"])
+
+        case "mongocluster":
+            if "mongocluster" not in config:
+                logging.error("Mongocluster config section missing")
+                raise RuntimeError("Missing 'mongocluster' section in config")
+            mc_cfg = config["mongocluster"]
+            required_keys = ["hosts", "replica_set", "write_concern"]
+            missing = [k for k in required_keys if k not in mc_cfg]
+            if missing:
+                logging.error(f"missing mongocluster config keys: {missing}")
+                raise RuntimeError(f"Missing mongocluster config keys: {missing}")
+
+            write_concern = mc_cfg["write_concern"]
+            counter = MongoClusterCounter(
+                hosts=mc_cfg["hosts"],
+                replica_set=mc_cfg["replica_set"],
+                write_concern=write_concern
+            )
+
         case _:
             logging.error(f"unknown storage type {config['type']}")
             raise RuntimeError(f"Unsupported STORAGE type: {config['type']}")

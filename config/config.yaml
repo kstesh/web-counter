@@ -1,4 +1,4 @@
-type: cassandra      # memory | file | postgres | mongo | cassandra
+type: mongocluster     # memory | file | postgres | mongo | cassandra | mongocluster
 file_path: counter.txt
 
 postgres:
@@ -20,3 +20,8 @@ cassandra:
   host: host.docker.internal
   port: 9042
   keyspace: counter_db
+
+mongocluster:
+  hosts: "mongo1:27017,mongo2:27017,mongo3:27017"
+  replica_set: myReplicaSet
+  write_concern: 1   # 1 | "majority"
