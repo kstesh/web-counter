@@ -6,6 +6,7 @@ from .counters.file_counter import FileCounter
 from .counters.postgres_counter import PostgresCounter
 from .counters.mongo_counter import MongoCounter
 from .counters.cassandra_counter import CassandraCounter
+from .counters.cassandra_cluster_counter import CassandraClusterCounter
 from .counters.mongo_cluster_counter import MongoClusterCounter
 
 def load_config(path: str) -> dict:
@@ -77,6 +78,24 @@ def get_configured_counter() -> ACounter:
                 raise RuntimeError(f"Missing Cassandra config keys: {missing}")
 
             counter = CassandraCounter(host=cass_cfg["host"], port=cass_cfg["port"], keyspace=cass_cfg["keyspace"])
+
+        case "cassandracluster":
+            if "cassandracluster" not in config:
+                logging.error("Cassandracluster config section missing")
+                raise RuntimeError("Missing 'cassandracluster' section in config")
+            cc_cfg = config["cassandracluster"]
+            required_keys = ["hosts", "port", "keyspace", "consistency_level"]
+            missing = [k for k in required_keys if k not in cc_cfg]
+            if missing:
+                logging.error(f"missing cassandracluster config keys: {missing}")
+                raise RuntimeError(f"Missing cassandracluster config keys: {missing}")
+
+            counter = CassandraClusterCounter(
+                hosts=cc_cfg["hosts"],
+                port=int(cc_cfg["port"]),
+                keyspace=cc_cfg["keyspace"],
+                consistency_level=cc_cfg["consistency_level"],
+            )
 
         case "mongocluster":
             if "mongocluster" not in config:

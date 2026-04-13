@@ -1,4 +1,4 @@
-type: mongocluster     # memory | file | postgres | mongo | cassandra | mongocluster
+type: cassandracluster     # memory | file | postgres | mongo | cassandra | mongocluster | cassandracluster
 file_path: counter.txt
 
 postgres:
@@ -25,3 +25,12 @@ mongocluster:
   hosts: "mongo1:27017,mongo2:27017,mongo3:27017"
   replica_set: myReplicaSet
   write_concern: 1   # 1 | "majority"
+
+cassandracluster:
+  hosts:
+    - cassandra-1
+    - cassandra-2
+    - cassandra-3
+  port: 9042
+  keyspace: ks3
+  consistency_level: QUORUM   # ONE | QUORUM

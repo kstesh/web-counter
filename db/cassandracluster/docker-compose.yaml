@@ -1,0 +1,115 @@
+networks:
+  cassandra-net:
+    driver: bridge
+
+services:
+
+  cassandra-1:
+    image: "cassandra:5.0.7"
+    container_name: "cassandra-1"
+    ports:
+      - 7000:7000
+      - 9042:9042
+    networks:
+      - cassandra-net
+    environment:
+      - CASSANDRA_START_RPC=true
+      - CASSANDRA_RPC_ADDRESS=0.0.0.0
+      - CASSANDRA_LISTEN_ADDRESS=auto
+      - CASSANDRA_CLUSTER_NAME=my-cluster
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - CASSANDRA_DC=my-datacenter-1
+      - MAX_HEAP_SIZE=512M
+      - HEAP_NEWSIZE=128M
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+        reservations:
+          memory: 512m
+    volumes:
+      - cassandra-node-1:/var/lib/cassandra:rw
+    restart: on-failure
+    healthcheck:
+      test: [ "CMD-SHELL", "nodetool status | grep $(hostname -i) | grep -q UN" ]
+      interval: 30s
+      start_period: 3m
+      timeout: 10s
+      retries: 5
+
+  cassandra-2:
+    image: "cassandra:5.0.7"
+    container_name: "cassandra-2"
+    ports:
+      - 9043:9042
+    networks:
+      - cassandra-net
+    environment:
+      - CASSANDRA_START_RPC=true
+      - CASSANDRA_RPC_ADDRESS=0.0.0.0
+      - CASSANDRA_LISTEN_ADDRESS=auto
+      - CASSANDRA_CLUSTER_NAME=my-cluster
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - CASSANDRA_DC=my-datacenter-1
+      - CASSANDRA_SEEDS=cassandra-1
+      - MAX_HEAP_SIZE=512M
+      - HEAP_NEWSIZE=128M
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+        reservations:
+          memory: 512m
+    depends_on:
+      cassandra-1:
+        condition: service_healthy
+    volumes:
+      - cassandra-node-2:/var/lib/cassandra:rw
+    restart: on-failure
+    healthcheck:
+      test: [ "CMD-SHELL", "nodetool status | grep $(hostname -i) | grep -q UN" ]
+      interval: 30s
+      start_period: 3m
+      timeout: 10s
+      retries: 5
+
+  cassandra-3:
+    image: "cassandra:5.0.7"
+    container_name: "cassandra-3"
+    ports:
+      - 9044:9042
+    networks:
+      - cassandra-net
+    environment:
+      - CASSANDRA_START_RPC=true
+      - CASSANDRA_RPC_ADDRESS=0.0.0.0
+      - CASSANDRA_LISTEN_ADDRESS=auto
+      - CASSANDRA_CLUSTER_NAME=my-cluster
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - CASSANDRA_DC=my-datacenter-1
+      - CASSANDRA_SEEDS=cassandra-1
+      - MAX_HEAP_SIZE=512M
+      - HEAP_NEWSIZE=128M
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+        reservations:
+          memory: 512m
+    depends_on:
+      cassandra-2:
+        condition: service_healthy
+    volumes:
+      - cassandra-node-3:/var/lib/cassandra:rw
+    restart: on-failure
+    healthcheck:
+      test: [ "CMD-SHELL", "nodetool status | grep $(hostname -i) | grep -q UN" ]
+      interval: 30s
+      start_period: 3m
+      timeout: 10s
+      retries: 5
+
+volumes:
+  cassandra-node-1:
+  cassandra-node-2:
+  cassandra-node-3:
